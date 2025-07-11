@@ -12,18 +12,18 @@ public interface UsersMapper {
     @Insert("insert into users(id, name, department, created_at) values(#{id}, #{name}, #{department}, #{createdAt})")
     void regist(Users users);
 
-    @Insert([
+    @Insert({
         "<script>",
         "insert into users (id, name, department, created_at) values ",
         "<foreach collection='list' item='user' separator=','>",
         "(#{user.id}, #{user.name}, #{user.department}, #{user.createdAt})",
         "</foreach>",
         "</script>"
-    ])
+    })
     void bulkinsert(List<? extends Users> list);
 
-    @Delete("turncate table users")
-    void turncate();
+    @Delete("truncate table users")
+    void truncate();
 
     @Select("select * from users")
     Users selectAll();
