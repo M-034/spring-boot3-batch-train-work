@@ -10,8 +10,8 @@ import com.example.demo.core.exception.SkipException;
 public class ImportMembersProcessor implements ItemProcessor<ImportMembersItem, Members> {
     @Override
     public Members process(@NonNull ImportMembersItem item) throws Exception {
-        //商品IDが9999の時は登録しない
-        if ("9999".equals(item.getMerchId())) {
+        //商品IDが999の時は登録しない
+        if ("999".equals(item.getMerchId())) {
             throw new SkipException("この顧客は登録できません");
         }
         //メンバーエンティティを生成して返却
