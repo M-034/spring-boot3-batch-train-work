@@ -1,4 +1,4 @@
-package com.example.demo.batch.sample.master.user.receive;
+package com.example.demo.batch.card.keiyaku.receive;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
