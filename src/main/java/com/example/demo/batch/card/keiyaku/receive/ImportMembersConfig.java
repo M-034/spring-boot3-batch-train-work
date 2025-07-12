@@ -36,14 +36,14 @@ public class ImportMembersConfig {
     private final MembersMapper membersMapper;
     
     @Bean
-    public FlatFileItemReader<ImportMembersItem> reader() {
+    public FlatFileItemReader<ImportMembersItem> memberReader() {
         
-        FlatFileItemReader<ImportMembersItem> reader = new FlatFileItemReader<>();
+        FlatFileItemReader<ImportMembersItem> memberReader = new FlatFileItemReader<>();
 
         // ヘッダー行をスキップ
-        reader.setLinesToSkip(1);
-        reader.setResource(new FileSystemResource("input-data/member.csv"));
-        reader.setLineMapper(new DefaultLineMapper<ImportMembersItem>() {
+        memberReader.setLinesToSkip(1);
+        memberReader.setResource(new FileSystemResource("input-data/member.csv"));
+        memberReader.setLineMapper(new DefaultLineMapper<ImportMembersItem>() {
             {
                 setLineTokenizer(new DelimitedLineTokenizer() {
                     {
@@ -57,11 +57,11 @@ public class ImportMembersConfig {
                 });
             }
         });
-        return reader;
+        return memberReader;
     };
 
     @Bean
-    public Tasklet truncateTasklet() {
+    public Tasklet truncateMemberTasklet() {
         return new Tasklet() {
             @Override
             public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
@@ -91,7 +91,7 @@ public class ImportMembersConfig {
     @Bean
     public Step importMembersStep1() {
         return new StepBuilder("importMembersStep1", jobRepository)
-                .tasklet(truncateTasklet(), platformTransactionManager)
+                .tasklet(truncateMemberTasklet(), platformTransactionManager)
                 .allowStartIfComplete(true)
                 .build();
     }
@@ -103,7 +103,7 @@ public class ImportMembersConfig {
     public Step importMembersStep2() {
         return new StepBuilder("importMembersStep2", jobRepository)
                 .<ImportMembersItem, Members>chunk(10, platformTransactionManager)
-                .reader(reader())
+                .reader(memberReader())
                 .processor(memberImportProcessor)
                 .writer(memberImportWriter)
                 .allowStartIfComplete(true) // true:何度でも再実行可能。false:一度だけ実行可能。
